@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Compras Compartilhada</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+</head>
+<body>
+  <h1>🛒 Lista de Compras</h1>
+
+  <div id="listas"></div>
+
+  <script>
+    // 🔧 Substitua pelos dados do seu projeto Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCmTmsz9o8UUb0uRKV4shP9PhZeGsD2fAs",
+      authDomain: "lista-compras-compartilhada.firebaseapp.com",
+      databaseURL: "https://lista-compras-compartilhada-default-rtdb.firebaseio.com",
+      projectId: "lista-compras-compartilhada",
+      storageBucket: "lista-compras-compartilhada.firebasestorage.app",
+      messagingSenderId: "24947557172",
+      appId: "1:24947557172:web:0836a70a77953b72271b61"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    console.log("Firebase carregado");
+
+    const db = firebase.database();
+    const ref = db.ref("listaCompras");
+
+    const listas = {
+      "🥖 Padaria": [
+        "1 pacote de Pão de forma de 400 a 500g",
+        "1 pacote de Pão de forma de 400 a 500g"
+      ],
+      "🥫 Mercearia": [
+        "1 Kg de Arroz", "1 Kg de Arroz", "1 Kg de Arroz", "1 Kg de Arroz",
+        "1 Kg de Feijão", "1 Kg de Feijão", "1 Kg de Feijão", "1 Kg de Feijão",
+        "1 pacote de Macarrão (500g)", "1 pacote de Macarrão (500g)", "1 pacote de Macarrão (500g)",
+        "1 molho de tomate (300g)", "1 molho de tomate (300g)", "1 molho de tomate (300g)",
+        "1 Óleo de soja", "1 Óleo de soja",
+        "1Kg de Açúcar", "1Kg de Açúcar",
+        "1Kg de Sal",
+        "500g de Café", "500g de Café"
+      ],
+      "🧼 Higiene e Limpeza": [
+        "4 Sabonete",
+        "1 Detergente", "1 Detergente",
+        "1 Papel higiênico (4 rolos)", "1 Papel higiênico (4 rolos)"
+      ]
+    };
+
+    const container = document.getElementById("listas");
+
+    let checkboxIndex = 0;
+
+    for (const [categoria, itens] of Object.entries(listas)) {
+      const h2 = document.createElement("h2");
+      h2.textContent = categoria;
+      container.appendChild(h2);
+
+      const ul = document.createElement("ul");
+
+      itens.forEach(item => {
+        const li = document.createElement("li");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = "item" + checkboxIndex;
+
+        checkbox.addEventListener("change", () => {
+          ref.child(checkbox.id).set(checkbox.checked);
+          console.log(`Checkbox ${checkbox.id} set to ${checkbox.checked}`);
+        });
+
+        li.appendChild(checkbox);
+        li.appendChild(document.createTextNode(" " + item));
+        ul.appendChild(li);
+
+        checkboxIndex++;
+      });
+
+      container.appendChild(ul);
+    }
+
+    // Sincroniza com Firebase
+    ref.on("value", snapshot => {
+      const data = snapshot.val();
+      if (data) {
+        Object.entries(data).forEach(([id, checked]) => {
+          const checkbox = document.getElementById(id);
+          if (checkbox) checkbox.checked = checked;
+          console.log(`Checkbox ${id} loaded with value ${checked}`);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
