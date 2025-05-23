@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -26,8 +25,6 @@
     };
 
     firebase.initializeApp(firebaseConfig);
-    console.log("Firebase carregado");
-
     const db = firebase.database();
     const ref = db.ref("listaCompras");
 
@@ -54,7 +51,6 @@
     };
 
     const container = document.getElementById("listas");
-
     let checkboxIndex = 0;
 
     for (const [categoria, itens] of Object.entries(listas)) {
@@ -69,6 +65,7 @@
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.id = "item" + checkboxIndex;
+        checkbox.name = "item" + checkboxIndex;
 
         checkbox.addEventListener("change", () => {
           ref.child(checkbox.id).set(checkbox.checked);
@@ -96,6 +93,8 @@
         });
       }
     });
+
+    console.log("Firebase carregado");
   </script>
 </body>
 </html>
